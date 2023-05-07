@@ -3,7 +3,7 @@
 import { Microphone, Send } from "@/assets/Icons";
 import { createSpeechlySpeechRecognition } from "@speechly/speech-recognition-polyfill";
 import Head from "next/head";
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
@@ -25,7 +25,7 @@ type ChatMessage = {
 export default function Home() {
   const [chatMessage, setChatMessage] = useState<ChatMessage[]>([]);
   const [question, setQuestion] = useState("");
-
+  const chatRef = useRef<HTMLDivElement>(null);
   const isChanging = useRef(false);
 
   const {
@@ -183,6 +183,11 @@ export default function Home() {
     }
   };
 
+  useEffect(() => {
+    if (!chatMessage?.length) return;
+    chatRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chatMessage?.length]);
+
   return (
     <>
       <Head>
@@ -193,15 +198,16 @@ export default function Home() {
           AI Chat Room
         </h1>
         <div
-          className={`w-full flex flex-col min-h-[90vh] container mx-auto p-4  px-4 pt-4 relative `}
+          className={`w-full flex flex-col  container mx-auto p-4  px-4 pt-4 relative `}
         >
-          <div className="flex flex-col h-max overflow-y-auto left-menu-scroll pb-20 ">
+          <div className="flex flex-col h-[80vh] bg-gray-800 overflow-y-auto pl-4 pb-20 ">
             {chatMessage?.map((item) => (
-              <>
-                {item?.question?.length && (
+              <Fragment key={item?.id}>
+                {item?.question?.length ? (
                   <div
                     className="relative w-full left-0 text-sm  py-4 flex items-center justify-end  "
                     key={item?.id + item?.question}
+                    ref={chatRef}
                   >
                     <div className="w-full flex flex-col items-end mr-4  gap-2">
                       <span className="max-w-[90%] md:max-w-[70%] w-fit   text-sm text-black bg-gray-100 rounded-b-2xl rounded-l-2xl shadow-lg font-medium tracking-wide py-2 px-4">
@@ -212,13 +218,24 @@ export default function Home() {
                       </span>
                     </div>
                   </div>
-                )}
+                ) : null}
 
                 {item?.answer?.length ? (
                   <div
                     className="relative w-full py-4 left-0  gap-4 flex items-start justify-start"
                     key={item?.id}
+                    ref={chatRef}
                   >
+                    <div
+                      className={` h-12 w-12  min-w-fit min-h-fit rounded-full flex items-center  justify-center overflow-hidden cursor-pointer select-none  font-medium text-white bg-gray-800`}
+                    >
+                      <img
+                        src="/bot.png"
+                        alt="bot"
+                        className="h-full w-full object-cover "
+                        loading="lazy"
+                      />
+                    </div>
                     <div className="w-full flex flex-col gap-1">
                       <div className="flex items-center gap-2">
                         <span
@@ -234,7 +251,7 @@ export default function Home() {
                 ) : (
                   <>Thinking...</>
                 )}
-              </>
+              </Fragment>
             ))}
           </div>
 
