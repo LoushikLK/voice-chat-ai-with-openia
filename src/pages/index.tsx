@@ -192,6 +192,7 @@ export default function Home() {
     <>
       <Head>
         <title>AI</title>
+        <link rel="shortcut icon" href="bot.png" type="image/png" />
       </Head>
       <main className=" bg-gray-900 min-h-screen flex flex-col gap-4  text-white  ">
         <h1 className="w-full text-center p-4 text-4xl text-teal-500 font-medium tracking-wide ">
